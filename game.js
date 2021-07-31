@@ -5,6 +5,7 @@ class Game {
         this.player_one = ""
         this.player_two = ""
         this.turn = ""
+        this.alphabet = ["A", "B", "C", "D", "E", "F", "G", "H"];
         this.game_info = {
             boardSize: 8,
             
@@ -16,19 +17,27 @@ class Game {
                 {
                     name: "Destroyer",
                     locations: [0,0],
-                    hit: [false, false]
+                    hits: [false, false]
                 },
                 {
                     name: "Cruiser",
                     locations: [0,0,0],
-                    hit: [false, false, false]
+                    hits: [false, false, false]
                 },
                 {
                     name: "Battleship",
                     locations: [0,0,0,0],
-                    hit: [false, false, false, false]
+                    hits: [false, false, false, false]
                 },
-            ]
+            ],
+            board: `00000000
+                00000000
+                00000000
+                00000000
+                00000000
+                00000000
+                00000000
+                00000000`
             
         }
         this.player_two_game_info = {
@@ -38,30 +47,29 @@ class Game {
                 {
                     name: "Destroyer",
                     locations: [0,0],
-                    hit: [false, false]
+                    hits: [false, false]
                 },
                 {
                     name: "Cruiser",
                     locations: [0,0,0],
-                    hit: [false, false, false]
+                    hits: [false, false, false]
                 },
                 {
                     name: "Battleship",
                     locations: [0,0,0,0],
-                    hit: [false, false, false, false]
+                    hits: [false, false, false, false]
                 },
-            ]
+            ],
+            board: `00000000
+                00000000
+                00000000
+                00000000
+                00000000
+                00000000
+                00000000
+                00000000`
             
         }
-        // this.board = 
-        // `0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        // 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        //  0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        //  0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        //  0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        //  0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        //  0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0
-        //  0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0`
     }
     set_player_one(player_one) {
         this.player_one = player_one
@@ -126,6 +134,34 @@ class Game {
             }
         }
         console.log("no collsion");
+        return false
+    }
+    fire(row, col) {
+        let shipHit = false;
+        let rowAsNum = this.alphabet.indexOf(row.toUpperCase()) 
+        let guess = rowAsNum + col
+        console.log(`${this.turn}'s guess: ${guess}`);
+        if (this.turn === this.player_one) {
+            shipHit = this.checkHit(this.player_two_game_info, guess)
+            this.turn = this.player_two
+            console.log(`${this.player_two}'s turn`);
+        } else {
+            shipHit = this.checkHit(this.player_one_game_info, guess)
+            this.turn = this.player_one
+            console.log(`${this.player_one}'s turn`);
+        }
+        console.log(shipHit);
+        return shipHit
+    }
+    checkHit(player, guess) {
+        for (let ship of player.ships) {
+            let index = ship.locations.indexOf(guess)
+            if (index >= 0) {
+                console.log('HIT');
+                ship.hits[index] = true
+                return true
+            }
+        }
         return false
     }
 }
