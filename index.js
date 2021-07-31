@@ -5,6 +5,7 @@ const game = require('./game');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+let new_game
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -16,6 +17,7 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
 	console.log('Ready!');
+     new_game = new game.Game();
 });
 
 client.on('message', message => {
@@ -33,7 +35,7 @@ client.on('message', message => {
     }
 
     try {
-		command.execute(message, args);
+		command.execute(message, args, new_game);
 	} catch (error) {
 		console.error(error);
 		message.reply('there was an error trying to execute that command!');

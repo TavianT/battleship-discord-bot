@@ -1,0 +1,22 @@
+{
+    "numShips": 3,
+    "shipsSunk": 0,
+    "ships": [
+        {
+            "name": "Destroyer",
+            "locations": [0,0],
+            "hit": [false, false]
+        },
+        {
+            "name": "Cruiser",
+            "locations": [0,0,0],
+            "hit": [false, false, false]
+        },
+        {
+            "name": "Battleship",
+            "locations": [0,0,0,0],
+            "hit": [false, false, false, false]
+        }
+    ]
+    
+}
