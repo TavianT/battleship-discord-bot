@@ -17,17 +17,20 @@ class Game {
                 {
                     name: "Destroyer",
                     locations: [0,0],
-                    hits: [false, false]
+                    hits: [false, false],
+                    sunk: false
                 },
                 {
                     name: "Cruiser",
                     locations: [0,0,0],
-                    hits: [false, false, false]
+                    hits: [false, false, false],
+                    sunk: false
                 },
                 {
                     name: "Battleship",
                     locations: [0,0,0,0],
-                    hits: [false, false, false, false]
+                    hits: [false, false, false, false],
+                    sunk: false
                 },
             ],
             board: `00000000
@@ -47,17 +50,20 @@ class Game {
                 {
                     name: "Destroyer",
                     locations: [0,0],
-                    hits: [false, false]
+                    hits: [false, false],
+                    sunk: false
                 },
                 {
                     name: "Cruiser",
                     locations: [0,0,0],
-                    hits: [false, false, false]
+                    hits: [false, false, false],
+                    sunk: false
                 },
                 {
                     name: "Battleship",
                     locations: [0,0,0,0],
-                    hits: [false, false, false, false]
+                    hits: [false, false, false, false],
+                    sunk: false
                 },
             ],
             board: `00000000
@@ -140,15 +146,14 @@ class Game {
         let shipHit = false;
         let rowAsNum = this.alphabet.indexOf(row.toUpperCase()) 
         let guess = rowAsNum + col
-        console.log(`${this.turn}'s guess: ${guess}`);
         if (this.turn === this.player_one) {
             shipHit = this.checkHit(this.player_two_game_info, guess)
             this.turn = this.player_two
-            console.log(`${this.player_two}'s turn`);
+            console.log(this.player_two_game_info);
         } else {
             shipHit = this.checkHit(this.player_one_game_info, guess)
             this.turn = this.player_one
-            console.log(`${this.player_one}'s turn`);
+            console.log(this.player_one_game_info);
         }
         console.log(shipHit);
         return shipHit
@@ -163,6 +168,37 @@ class Game {
             }
         }
         return false
+    }
+    isSunk(playerName) {
+        if (playerName === this.player_one) {
+            for (let ship of this.player_one_game_info.ships) {
+                let allSectionsHit = ship.hits.every((e) => {
+                    return e == true
+                })
+                if (allSectionsHit && ship.sunk == false) {
+                    ship.sunk = true
+                    this.player_one_game_info.shipsSunk++
+                    return {
+                        name: ship.name,
+                        shipsSunk: this.player_one_game_info.shipsSunk
+                    }
+                }
+            }
+        } else {
+            for (let ship of this.player_two_game_info.ships) {
+                let allSectionsHit = ship.hits.every((e) => {
+                    return e == true
+                })
+                if (allSectionsHit && ship.sunk == false) {
+                    ship.sunk = true
+                    return {
+                        name: ship.name,
+                        shipsSunk: this.player_one_game_info.shipsSunk
+                    }
+                }
+            }
+        }
+        return null
     }
 }
 module.exports = {

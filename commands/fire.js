@@ -26,9 +26,15 @@ module.exports = {
             return
         }
         if (game.fire(args[0], args[1])) {
-            message.reply("Hit")
+            message.reply("Hit!")
+            let sunkShip = game.isSunk(game.turn)
+            if (sunkShip) {
+                message.channel.send(`You have sunk the ${sunkShip.name} ship! You have now sunk a total of ${sunkShip.shipsSunk}!`)
+            }
         } else {
             message.reply("No hit")
         }
+        message.channel.send(`It is ${game.turn}'s turn`)
+        
 	},
 };
