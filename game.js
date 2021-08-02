@@ -6,9 +6,10 @@ class Game {
         this.player_two = ""
         this.turn = ""
         this.alphabet = ["A", "B", "C", "D", "E", "F", "G", "H"];
+        this.challengeIssued = false
+        this.challengeAccepted = false
         this.game_info = {
             boardSize: 8,
-            
         }
         this.player_one_game_info = {
             numShips: 3,
@@ -242,6 +243,8 @@ class Game {
         this.player_one = ""
         this.player_two = ""
         this.turn = ""
+        this.challengeIssued = false
+        this.challengeAccepted = false
     }
 }
 module.exports = {

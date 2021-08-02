@@ -9,10 +9,12 @@ module.exports = {
         if (!message.mentions.users.size) {
             return message.reply('you need to tag a user in order to challenge them!');
         }
-        // board = 
-        // `0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0`
+        if (game.challengeIssued) {
+            return message.reply(`A challenge has already been issued by ${game.player_one}`)
+        }
         const taggedUser = message.mentions.users.first();
 		message.channel.send(`${message.author.username} challenges ${taggedUser.username} to a game of Battleship.\n${taggedUser} to accept enter \`!bb accept\` to decline enter \`!bb decline\``);
         game.set_player_one(message.author.username)
+        game.challengeIssued = true
 	},
 };
