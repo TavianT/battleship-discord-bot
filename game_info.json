@@ -5,17 +5,20 @@
         {
             "name": "Destroyer",
             "locations": [0,0],
-            "hit": [false, false]
+            "hit": [false, false],
+            "sunk": false
         },
         {
             "name": "Cruiser",
             "locations": [0,0,0],
-            "hit": [false, false, false]
+            "hit": [false, false, false],
+            "sunk": false
         },
         {
             "name": "Battleship",
             "locations": [0,0,0,0],
-            "hit": [false, false, false, false]
+            "hit": [false, false, false, false],
+            "sunk": false
         }
     ]
     

@@ -25,16 +25,25 @@ module.exports = {
             message.reply("column argument must be Between 0-7")
             return
         }
+        let gameOver = false
         if (game.fire(args[0], args[1])) {
             message.reply("Hit!")
             let sunkShip = game.isSunk(game.turn)
             if (sunkShip) {
-                message.channel.send(`You have sunk the ${sunkShip.name} ship! You have now sunk a total of ${sunkShip.shipsSunk}!`)
+                message.channel.send(`You have sunk the ${sunkShip.name} ship! You have now sunk a total of ${sunkShip.shipsSunk} ships!`)
+                if (game.gameWon(message.author.username)) {
+                    //add trophy emoji to congrats message using \:trophy:
+                    message.channel.send(`CONGRATULATIONS ${message.author.username} you have won!`)
+                    gameOver = true
+                }
             }
         } else {
             message.reply("No hit")
         }
-        message.channel.send(`It is ${game.turn}'s turn`)
+        if (!gameOver) {
+            message.channel.send(`It is ${game.turn}'s turn`)
+        }
+        
         
 	},
 };

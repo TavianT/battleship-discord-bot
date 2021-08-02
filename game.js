@@ -149,11 +149,11 @@ class Game {
         if (this.turn === this.player_one) {
             shipHit = this.checkHit(this.player_two_game_info, guess)
             this.turn = this.player_two
-            console.log(this.player_two_game_info);
+            console.log(this.player_two_game_info.ships[0].locations);
         } else {
             shipHit = this.checkHit(this.player_one_game_info, guess)
             this.turn = this.player_one
-            console.log(this.player_one_game_info);
+            console.log(this.player_one_game_info.ships[0].locations);
         }
         console.log(shipHit);
         return shipHit
@@ -168,6 +168,15 @@ class Game {
             }
         }
         return false
+    }
+    updateBoard(playerName) {
+        if (playerName === this.player_one) {
+            //use array.foreach & index % 8 === 8 - 1 tp get every 8th elementr
+            //Use row * 8 + column to get the element of board array that needs updating
+            //change board to array of strings
+        } else {
+            
+        }
     }
     isSunk(playerName) {
         if (playerName === this.player_one) {
@@ -191,14 +200,36 @@ class Game {
                 })
                 if (allSectionsHit && ship.sunk == false) {
                     ship.sunk = true
+                    this.player_two_game_info.shipsSunk++
                     return {
                         name: ship.name,
-                        shipsSunk: this.player_one_game_info.shipsSunk
+                        shipsSunk: this.player_two_game_info.shipsSunk
                     }
                 }
             }
         }
         return null
+    }
+    gameWon(playerName) {
+        if (playerName == this.player_one) {
+            if (this.player_two_game_info.shipsSunk == this.player_two_game_info.numShips) {
+                this.endGame()
+                return true
+            }
+        } else {
+            if (this.player_one_game_info.shipsSunk == this.player_one_game_info.numShips) {
+                this.endGame()
+                return true
+            }
+        }
+        return false
+    }
+    endGame() {
+        this.player_two_game_info = default_game_info
+        this.player_one_game_info = default_game_info
+        this.player_one = ""
+        this.player_two = ""
+        this.turn = ""
     }
 }
 module.exports = {
