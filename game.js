@@ -33,14 +33,7 @@ class Game {
                     sunk: false
                 },
             ],
-            board: `00000000
-                00000000
-                00000000
-                00000000
-                00000000
-                00000000
-                00000000
-                00000000`
+            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n']
             
         }
         this.player_two_game_info = {
@@ -66,14 +59,7 @@ class Game {
                     sunk: false
                 },
             ],
-            board: `00000000
-                00000000
-                00000000
-                00000000
-                00000000
-                00000000
-                00000000
-                00000000`
+            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n']
             
         }
     }
@@ -148,10 +134,12 @@ class Game {
         let guess = rowAsNum + col
         if (this.turn === this.player_one) {
             shipHit = this.checkHit(this.player_two_game_info, guess)
+            this.updateBoard(this.player_two_game_info, guess)
             this.turn = this.player_two
             console.log(this.player_two_game_info.ships[0].locations);
         } else {
             shipHit = this.checkHit(this.player_one_game_info, guess)
+            this.updateBoard(this.player_one_game_info, guess)
             this.turn = this.player_one
             console.log(this.player_one_game_info.ships[0].locations);
         }
@@ -169,14 +157,38 @@ class Game {
         }
         return false
     }
-    updateBoard(playerName) {
-        if (playerName === this.player_one) {
-            //use array.foreach & index % 8 === 8 - 1 tp get every 8th elementr
-            //Use row * 8 + column to get the element of board array that needs updating
-            //change board to array of strings
-        } else {
-            
+    updateBoard(player, guess) {
+        let shipHit = false
+        //TODO: Find a cleaner way to implement this
+        //convert location to string, get each char then convert back to number
+        const location = String(guess)
+        const row = Number(location.charAt(0))
+        const col = Number(location.charAt(1))
+        //where to update board
+        const boardIndex = (row * 8) + col
+        for (let ship of player.ships) {
+            if (ship.locations.includes(guess)) {
+                player.board[boardIndex] = player.board[boardIndex].replace("*", "O")
+                shipHit = true
+            }
         }
+        if (!shipHit) {
+            player.board[boardIndex] = player.board[boardIndex].replace("*", "X")
+        }
+    }
+    showBoard(playerName) {
+        let boardString = ""
+        if (playerName == this.player_one) {
+            for (const char of this.player_one_game_info.board) {
+                boardString += char
+            }
+        } else {
+            for (const char of this.player_two_game_info.board) {
+                boardString += char
+            }
+        }
+        console.log(boardString);
+        return boardString
     }
     isSunk(playerName) {
         if (playerName === this.player_one) {

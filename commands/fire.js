@@ -32,7 +32,7 @@ module.exports = {
             if (sunkShip) {
                 message.channel.send(`You have sunk the ${sunkShip.name} ship! You have now sunk a total of ${sunkShip.shipsSunk} ships!`)
                 if (game.gameWon(message.author.username)) {
-                    //add trophy emoji to congrats message using \:trophy:
+                    //TODO: add trophy emoji to congrats message using \:trophy:
                     message.channel.send(`CONGRATULATIONS ${message.author.username} you have won!`)
                     gameOver = true
                 }
@@ -41,6 +41,9 @@ module.exports = {
             message.reply("No hit")
         }
         if (!gameOver) {
+            //show oppositions board
+            message.channel.send(`Board:`)
+            message.channel.send(`${game.showBoard(game.turn)}`)
             message.channel.send(`It is ${game.turn}'s turn`)
         }
         
