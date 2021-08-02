@@ -12,7 +12,7 @@ module.exports = {
         // board = 
         // `0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0`
         const taggedUser = message.mentions.users.first();
-		message.channel.send(`${message.author.username} challenges ${taggedUser.username} to a game of Battleship.\n${taggedUser} to accept enter '!bb accept' to decline enter '!bb decline'`);
+		message.channel.send(`${message.author.username} challenges ${taggedUser.username} to a game of Battleship.\n${taggedUser} to accept enter \`!bb accept\` to decline enter \`!bb decline\``);
         game.set_player_one(message.author.username)
 	},
 };
