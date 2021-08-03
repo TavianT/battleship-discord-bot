@@ -243,6 +243,7 @@ class Game {
             const player = await Player.findOne({playerId: winner.id})
             const update = {wins: player.wins++}
             await player.updateOne(update)
+            player.save()
         } else {
             //first win so manually enter Ws and Ls
             const player = new Player({playerId: winner.id, name: winner.name, wins: 1, losses: 0})
@@ -252,8 +253,9 @@ class Game {
         //update player losers record first
         if (loserExists) {
             const player = await Player.findOne({playerId: loser.id})
-            const update = {wins: player.losses++}
+            const update = {losses: player.losses++}
             await player.updateOne(update)
+            player.save()
         } else {
             //first loss so manually enter Ws and Ls
             const player = new Player({playerId: loser.id, name: loser.name, wins: 0, losses: 1})
