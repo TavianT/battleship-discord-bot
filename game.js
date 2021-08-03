@@ -1,6 +1,5 @@
 const default_game_info = require('./game_info.json');
 const Player = require('./models/player.js')
-const mongoose = require('mongoose');
 
 class Game {
     constructor() {
