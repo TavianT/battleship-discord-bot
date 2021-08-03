@@ -1,4 +1,6 @@
 const default_game_info = require('./game_info.json');
+const Player = require('./models/player.js')
+const mongoose = require('mongoose');
 
 class Game {
     constructor() {
@@ -65,11 +67,11 @@ class Game {
         }
     }
     set_player_one(id, name) {
-        this.player_one = new Player(id, name)
+        this.player_one = new PlayerInfo(id, name)
         console.log(`Set player 1 to ${this.player_one.name}`);
     }
     set_player_two(id, name) {
-        this.player_two = new Player(id, name)
+        this.player_two = new PlayerInfo(id, name)
         console.log(`Set player 2 to ${this.player_two.name}`);
     }
     start_game() {
@@ -86,7 +88,6 @@ class Game {
             do {
                 locations = this.generate_ship(player.ships[i].locations.length)
             } while (this.collision(locations, player));
-            console.log(`setting ${player.ships[i].name} location to: ${locations}`);
             player.ships[i].locations = locations
         }
     }
@@ -101,10 +102,6 @@ class Game {
             row = Math.floor(Math.random() * (this.game_info.boardSize - shipLength + 1))
             col = Math.floor(Math.random() * this.game_info.boardSize)
         }
-
-        console.log(`row: ${row}`);
-        console.log(`column: ${col}`);
-
         let newShipLocations = [];
 
         for (let i = 0; i < shipLength; i++) {
@@ -121,12 +118,10 @@ class Game {
         for (let ship of player.ships) {
             for (let i = 0; i < locations.length; i++) {
                 if (ship.locations.indexOf(locations[i]) >= 0) {
-                    console.log("collsion");
                     return true
                 }
             }
         }
-        console.log("no collsion");
         return false
     }
     fire(row, col) {
@@ -137,14 +132,11 @@ class Game {
             shipHit = this.checkHit(this.player_two_game_info, guess)
             this.updateBoard(this.player_two_game_info, guess)
             this.turn = this.player_two.name
-            console.log(this.player_two_game_info.ships[0].locations);
         } else {
             shipHit = this.checkHit(this.player_one_game_info, guess)
             this.updateBoard(this.player_one_game_info, guess)
             this.turn = this.player_one.name
-            console.log(this.player_one_game_info.ships[0].locations);
         }
-        console.log(shipHit);
         return shipHit
     }
     checkHit(player, guess) {
@@ -156,6 +148,7 @@ class Game {
                 return true
             }
         }
+        console.log('MISS');
         return false
     }
     updateBoard(player, guess) {
@@ -188,7 +181,6 @@ class Game {
                 boardString += char
             }
         }
-        console.log(boardString);
         return boardString
     }
     isSunk(playerName) {
@@ -225,17 +217,47 @@ class Game {
     }
     gameWon(playerName) {
         if (playerName == this.player_one.name) {
+            //player one wins
             if (this.player_two_game_info.shipsSunk == this.player_two_game_info.numShips) {
+                this.updateDatabase(this.player_one, this.player_two)
                 this.endGame()
                 return true
             }
         } else {
+            //player two wins
             if (this.player_one_game_info.shipsSunk == this.player_one_game_info.numShips) {
+                this.updateDatabase(this.player_two, this.player_one)
                 this.endGame()
                 return true
             }
         }
         return false
+    }
+    async updateDatabase(winner, loser) {
+        const winnerExists = await Player.exists({playerId: winner.id})
+        const loserExists = await Player.exists({playerId: loser.id})
+        //update player winners record first
+        if (winnerExists) {
+            const player = await Player.findOne({playerId: winner.id})
+            const update = {wins: player.wins++}
+            await player.updateOne(update)
+            //Player.findOneAndUpdate({playerId: winner.id}, {$inc : {'wins' : 1}})
+        } else {
+            //first win so manually enter Ws and Ls
+            const player = new Player({playerId: winner.id, name: winner.name, wins: 1, losses: 0})
+            player.save()
+        }
+
+        //update player losers record first
+        if (loserExists) {
+            const player = await Player.findOne({playerId: loser.id})
+            const update = {wins: player.losses++}
+            await player.updateOne(update)
+        } else {
+            //first loss so manually enter Ws and Ls
+            const player = new Player({playerId: loser.id, name: loser.name, wins: 0, losses: 1})
+            player.save()
+        }
     }
     endGame() {
         this.player_two_game_info = default_game_info
@@ -247,7 +269,7 @@ class Game {
         this.challengeAccepted = false
     }
 }
-class Player {
+class PlayerInfo {
     constructor(id, name) {
         this.name = name
         this.id = id

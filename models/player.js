@@ -14,7 +14,7 @@ const playerSchema = new Schema({
         type: Number,
         required: true
     },
-    loses: {
+    losses: {
         type: Number,
         required: true
     },
