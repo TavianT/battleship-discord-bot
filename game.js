@@ -36,7 +36,8 @@ class Game {
                     sunk: false
                 },
             ],
-            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n']
+            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n'],
+            surrendered: false
             
         }
         this.player_two_game_info = {
@@ -62,7 +63,8 @@ class Game {
                     sunk: false
                 },
             ],
-            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n']
+            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n'],
+            surrendered: false
             
         }
     }
@@ -215,17 +217,17 @@ class Game {
         }
         return null
     }
-    gameWon(playerName) {
-        if (playerName == this.player_one.name) {
+    gameWon(id) {
+        if (id == this.player_one.id) {
             //player one wins
-            if (this.player_two_game_info.shipsSunk == this.player_two_game_info.numShips) {
+            if (this.player_two_game_info.shipsSunk == this.player_two_game_info.numShips || this.player_two_game_info.surrendered) {
                 this.updateDatabase(this.player_one, this.player_two)
                 this.endGame()
                 return true
             }
         } else {
             //player two wins
-            if (this.player_one_game_info.shipsSunk == this.player_one_game_info.numShips) {
+            if (this.player_one_game_info.shipsSunk == this.player_one_game_info.numShips || this.player_one_game_info.surrendered) {
                 this.updateDatabase(this.player_two, this.player_one)
                 this.endGame()
                 return true
@@ -241,7 +243,6 @@ class Game {
             const player = await Player.findOne({playerId: winner.id})
             const update = {wins: player.wins++}
             await player.updateOne(update)
-            //Player.findOneAndUpdate({playerId: winner.id}, {$inc : {'wins' : 1}})
         } else {
             //first win so manually enter Ws and Ls
             const player = new Player({playerId: winner.id, name: winner.name, wins: 1, losses: 0})
@@ -267,6 +268,15 @@ class Game {
         this.turn = ""
         this.challengeIssued = false
         this.challengeAccepted = false
+    }
+    surrender(id) {
+        if (id == this.player_one.id) {
+            this.player_one_game_info.surrendered = true
+            console.log(this.gameWon(this.player_two.id));
+        } else {
+            this.player_two_game_info.surrendered = true
+            console.log(this.gameWon(this.player_one.id));
+        }
     }
 }
 class PlayerInfo {
