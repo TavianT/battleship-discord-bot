@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const mongoose = require('mongoose');
+const { prefix, token, mongoUsername, mongoPassword } = require('./config.json');
 const game = require('./game');
 
 const client = new Discord.Client();
@@ -15,10 +16,17 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 
-client.once('ready', () => {
-	console.log('Ready!');
-    new_game = new game.Game();
-});
+//connect to mongoDB
+const dbUri = `mongodb+srv://${mongoUsername}:${mongoPassword}@cluster0.4yiwl.mongodb.net/battleship?retryWrites=true&w=majority`
+mongoose.connect(dbUri, {useNewUrlParser: true, useUnifiedTopology: true})
+.then((result) => {
+	console.log("MongoDB connection successful");
+	client.once('ready', () => {
+		console.log('Ready!');
+		new_game = new game.Game();
+	});
+})
+.catch((err) => console.error(err))
 
 client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;

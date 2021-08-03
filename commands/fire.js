@@ -42,7 +42,7 @@ module.exports = {
         }
         if (!gameOver) {
             //show oppositions board
-            message.channel.send(`Board:`)
+            message.channel.send(`Opponents board:`)
             message.channel.send(`${game.showBoard(game.turn)}`)
             message.channel.send(`It is ${game.turn}'s turn`)
         }

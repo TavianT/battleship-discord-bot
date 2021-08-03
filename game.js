@@ -2,8 +2,8 @@ const default_game_info = require('./game_info.json');
 
 class Game {
     constructor() {
-        this.player_one = ""
-        this.player_two = ""
+        this.player_one = null
+        this.player_two = null
         this.turn = ""
         this.alphabet = ["A", "B", "C", "D", "E", "F", "G", "H"];
         this.challengeIssued = false
@@ -64,13 +64,13 @@ class Game {
             
         }
     }
-    set_player_one(player_one) {
-        this.player_one = player_one
-        console.log(`Set player 1 to ${this.player_one}`);
+    set_player_one(id, name) {
+        this.player_one = new Player(id, name)
+        console.log(`Set player 1 to ${this.player_one.name}`);
     }
-    set_player_two(player_two) {
-        this.player_two = player_two
-        console.log(`Set player 2 to ${this.player_two}`);
+    set_player_two(id, name) {
+        this.player_two = new Player(id, name)
+        console.log(`Set player 2 to ${this.player_two.name}`);
     }
     start_game() {
         this.generate_ship_locations(this.player_one_game_info)
@@ -78,7 +78,7 @@ class Game {
         this.set_turn(this.player_two)
     }
     set_turn(player) {
-        this.turn = player
+        this.turn = player.name
     }
     generate_ship_locations(player) {
         let locations;
@@ -133,15 +133,15 @@ class Game {
         let shipHit = false;
         let rowAsNum = this.alphabet.indexOf(row.toUpperCase()) 
         let guess = rowAsNum + col
-        if (this.turn === this.player_one) {
+        if (this.turn === this.player_one.name) {
             shipHit = this.checkHit(this.player_two_game_info, guess)
             this.updateBoard(this.player_two_game_info, guess)
-            this.turn = this.player_two
+            this.turn = this.player_two.name
             console.log(this.player_two_game_info.ships[0].locations);
         } else {
             shipHit = this.checkHit(this.player_one_game_info, guess)
             this.updateBoard(this.player_one_game_info, guess)
-            this.turn = this.player_one
+            this.turn = this.player_one.name
             console.log(this.player_one_game_info.ships[0].locations);
         }
         console.log(shipHit);
@@ -179,7 +179,7 @@ class Game {
     }
     showBoard(playerName) {
         let boardString = ""
-        if (playerName == this.player_one) {
+        if (playerName == this.player_one.name) {
             for (const char of this.player_one_game_info.board) {
                 boardString += char
             }
@@ -192,7 +192,7 @@ class Game {
         return boardString
     }
     isSunk(playerName) {
-        if (playerName === this.player_one) {
+        if (playerName === this.player_one.name) {
             for (let ship of this.player_one_game_info.ships) {
                 let allSectionsHit = ship.hits.every((e) => {
                     return e == true
@@ -224,7 +224,7 @@ class Game {
         return null
     }
     gameWon(playerName) {
-        if (playerName == this.player_one) {
+        if (playerName == this.player_one.name) {
             if (this.player_two_game_info.shipsSunk == this.player_two_game_info.numShips) {
                 this.endGame()
                 return true
@@ -240,13 +240,20 @@ class Game {
     endGame() {
         this.player_two_game_info = default_game_info
         this.player_one_game_info = default_game_info
-        this.player_one = ""
-        this.player_two = ""
+        this.player_one = null
+        this.player_two = null
         this.turn = ""
         this.challengeIssued = false
         this.challengeAccepted = false
     }
 }
+class Player {
+    constructor(id, name) {
+        this.name = name
+        this.id = id
+    }
+}
 module.exports = {
-    Game   
+    Game,
+    Player   
 }
