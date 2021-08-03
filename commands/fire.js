@@ -31,7 +31,7 @@ module.exports = {
             let sunkShip = game.isSunk(game.turn)
             if (sunkShip) {
                 message.channel.send(`You have sunk the ${sunkShip.name} ship! You have now sunk a total of ${sunkShip.shipsSunk} ships!`)
-                if (game.gameWon(message.author.username)) {
+                if (game.gameWon(message.author.id)) {
                     //TODO: add trophy emoji to congrats message using \:trophy:
                     message.channel.send(`CONGRATULATIONS ${message.author.username} you have won!`)
                     gameOver = true
