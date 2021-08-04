@@ -24,6 +24,7 @@
     "mongoose": "^5.13.5"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "jest": "^27.0.6"
   }
 }
