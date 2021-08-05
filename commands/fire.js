@@ -23,6 +23,10 @@ module.exports = {
             message.reply("row argument must be between A-H")
             return
         }
+        if (args.length != 2) {
+            message.reply("Incorrect number of arguments given, use \`!bb help fire\` for more info")
+            return
+        }
         if(!/[0-7]/.test(args[1]) && args[1].length === 1) {
             message.reply("column argument must be Between 0-7")
             return
