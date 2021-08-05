@@ -13,6 +13,9 @@ module.exports = {
             return message.reply(`A challenge has already been issued by ${game.player_one}`)
         }
         const taggedUser = message.mentions.users.first();
+        if (taggedUser.username == message.author.username) {
+            return message.reply("You cannot challenge yourself")
+        }
 		message.channel.send(`${message.author.username} challenges ${taggedUser.username} to a game of Battleship.\n${taggedUser} to accept enter \`!bb accept\` to decline enter \`!bb decline\``);
         game.set_player_one(message.author.id,message.author.username)
         game.challengeIssued = true
