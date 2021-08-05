@@ -12,7 +12,7 @@ describe('Fire function from Game class', () => {
         game.endGame()
     })
 
-    it('Should return true', () => {
+    it('Should return true after firing at correct location', () => {
         const location = game.player_one_game_info.ships[0].locations[0].toString()
         const row = game.alphabet[location.charAt(0)]
         const col = location.charAt(1)
