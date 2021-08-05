@@ -1,12 +1,26 @@
 const default_game_info = require('./game_info.json');
 const Player = require('./models/player.js')
+const { createCanvas, loadImage } = require('canvas')
+const fs = require('fs')
+
+const WIDTH = 900
+const HEIGHT = 900
+const BOARD_IMAGE = "./public/grid_2.png"
+//enum object for colours
+const COLORS = {
+    RED: "#F00",
+    BLUE: "#00F",
+    BLACK: "000",
+    WHITE: "FFF",
+}
 
 class Game {
     constructor() {
         this.player_one = null
         this.player_two = null
         this.turn = ""
-        this.alphabet = ["A", "B", "C", "D", "E", "F", "G", "H"];
+        this.alphabet = ["A", "B", "C", "D", "E", "F", "G", "H"]
+        this.numbers = ["0", "1", "2", "3", "4", "5", "6", "7"]
         this.challengeIssued = false
         this.challengeAccepted = false
         this.game_info = {
@@ -35,7 +49,12 @@ class Game {
                     sunk: false
                 },
             ],
-            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n'],
+            board: {
+                imageStr: "./public/player_one_board.png",
+                canvas: null,
+                context: null
+            },
+            //board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n'],
             surrendered: false
             
         }
@@ -62,7 +81,12 @@ class Game {
                     sunk: false
                 },
             ],
-            board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n'],
+            board: {
+                imageStr: "./public/player_one_board.png",
+                canvas: null,
+                context: null
+            },
+            //board: ['* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n','* ', '* ','* ','* ','* ','* ','* ','* \n'],
             surrendered: false
             
         }
@@ -78,6 +102,8 @@ class Game {
     start_game() {
         this.generate_ship_locations(this.player_one_game_info)
         this.generate_ship_locations(this.player_two_game_info)
+        this.draw_base_board(this.player_one_game_info.board)
+        this.draw_base_board(this.player_two_game_info.board)
         this.set_turn(this.player_two)
     }
     set_turn(player) {
@@ -154,35 +180,61 @@ class Game {
     }
     updateBoard(player, guess) {
         let shipHit = false
-        //TODO: Find a cleaner way to implement this
-        //convert location to string, get each char then convert back to number
         const location = String(guess)
         const row = Number(location.charAt(0))
         const col = Number(location.charAt(1))
-        //where to update board
-        const boardIndex = (row * 8) + col
+        const xPos = row * 100 + 100
+        const yPos = col * 100 + 120
         for (let ship of player.ships) {
             if (ship.locations.includes(guess)) {
-                player.board[boardIndex] = player.board[boardIndex].replace("*", "O")
+                player.board.context.fillStyle = '#00F'
+                player.board.context.fillText('O',xPos,yPos)
                 shipHit = true
-            }
+                }
         }
         if (!shipHit) {
-            player.board[boardIndex] = player.board[boardIndex].replace("*", "X")
+            player.board.context.fillStyle = '#F00'
+                player.board.context.fillText('X',xPos,yPos)
         }
+        //const buffer = player.board.canvas.toBuffer('image/png')
+        //fs.writeFileSync(player.board.imageStr, buffer)
+        // //TODO: Find a cleaner way to implement this
+        // //convert location to string, get each char then convert back to number
+        // const location = String(guess)
+        // const row = Number(location.charAt(0))
+        // const col = Number(location.charAt(1))
+        // //where to update board
+        // const boardIndex = (row * 8) + col
+        // for (let ship of player.ships) {
+        //     if (ship.locations.includes(guess)) {
+        //         player.board[boardIndex] = player.board[boardIndex].replace("*", "O")
+        //         shipHit = true
+        //     }
+        // }
+        // if (!shipHit) {
+        //     player.board[boardIndex] = player.board[boardIndex].replace("*", "X")
+        // }
     }
     showBoard(playerName) {
-        let boardString = ""
+        //let boardString = ""
         if (playerName == this.player_one.name) {
-            for (const char of this.player_one_game_info.board) {
-                boardString += char
+            return {
+                canvas: this.player_one_game_info.board.canvas,
+                imagePath: this.player_one_game_info.board.imageStr
             }
+            // for (const char of this.player_one_game_info.board) {
+            //     //boardString += char
+            // }
         } else {
-            for (const char of this.player_two_game_info.board) {
-                boardString += char
+            // for (const char of this.player_two_game_info.board) {
+            //     //boardString += char
+            // }
+            return {
+                canvas: this.player_two_game_info.board.canvas,
+                imagePath: this.player_two_game_info.board.imageStr
             }
         }
-        return boardString
+        //return boardString
     }
     isSunk(playerName) {
         if (playerName === this.player_one.name) {
@@ -279,6 +331,32 @@ class Game {
             console.log(this.gameWon(this.player_one.id));
         }
     }
+    draw_base_board(board) {
+        board.canvas = createCanvas(WIDTH, HEIGHT)
+        board.context = board.canvas.getContext("2d")
+        board.context.font = 'bold 30pt Menlo'
+        board.context.textAlign = 'center'
+        board.context.fillStyle = '#fff'
+        board.context.fillRect(0, 0, WIDTH, HEIGHT)
+
+        loadImage(BOARD_IMAGE).then((image) => {
+            board.context.fillStyle = '#000'
+            board.context.drawImage(image, 50,50)
+
+            let y = 40
+            let x = 100
+            for (const letter of this.alphabet) {
+                board.context.fillText(letter, x, y)
+                x += 100
+            }
+            y = 120
+            x = 25
+            for (const num of this.numbers) {
+                board.context.fillText(num, x, y)
+                y += 100
+            }
+        })
+    }
 }
 class PlayerInfo {
     constructor(id, name) {
@@ -286,6 +364,7 @@ class PlayerInfo {
         this.id = id
     }
 }
+
 module.exports = {
     Game,
     Player   

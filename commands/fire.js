@@ -1,3 +1,5 @@
+const { MessageAttachment } = require("discord.js");
+
 module.exports = {
 	name: 'fire',
 	description: 'Fire at your oppenent from a range of A0-H7',
@@ -42,8 +44,10 @@ module.exports = {
         }
         if (!gameOver) {
             //show oppositions board
-            message.channel.send(`Opponents board:`)
-            message.channel.send(`${game.showBoard(game.turn)}`)
+            const image = game.showBoard(game.turn)
+            const attachment = new MessageAttachment(image.canvas.toBuffer(), image.imagePath)
+            message.channel.send({content: `Opponents board:`, files: [attachment]})
+            //message.channel.send(`${game.showBoard(game.turn)}`)
             message.channel.send(`It is ${game.turn}'s turn`)
         }
         
